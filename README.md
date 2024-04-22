@@ -3,6 +3,13 @@
 Have you ever wanted a better way to generate letters out of letters? Likely you have in slack. Fear
 not! This project solves those woes.
 
+## Gotchas
+
+* It seems like slack is really finicky. If you want perfect spacing, the optimal width param is 5
+  or 6, provided you use an OS provided emojie.
+* Monospaced characters like `8` (or w/e you like) work well
+* If you use a regular emojie, but use a code block is **_also_** works just fine.
+
 ## Requirements
 
 * Java
