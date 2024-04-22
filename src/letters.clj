@@ -171,8 +171,8 @@
             [0 0 0 0 0]
             [0 0 0 0 0]])
 
-(defn ->letter [^String letter]
-  (if (= " " letter)
+(defn ->letter [^Character letter]
+  (if (= " " (str letter))
     space
     (try
       (->> letter (str) (string/lower-case) (symbol) (ns-resolve 'letters) (deref))

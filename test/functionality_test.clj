@@ -13,10 +13,10 @@
 
 (deftest ->letter
   (testing "Standard character"
-    (is (= letters/a (letters/->letter "a"))))
+    (is (= letters/a (letters/->letter \a))))
   (testing "space is handled"
-    (is (= letters/space (letters/->letter " "))))
+    (is (= letters/space (letters/->letter \space))))
   (testing "Forces casing"
-    (is (= letters/b (letters/->letter "B"))))
+    (is (= letters/b (letters/->letter \B))))
   (testing "Simply returns nil for empty letter"
-    (is (nil? (letters/->letter "\\")))))
+    (is (nil? (letters/->letter \\)))))
