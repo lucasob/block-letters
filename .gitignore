@@ -1,0 +1,18 @@
+# Mac OS
+.DS_Store
+
+# IntelliJ
+.idea/
+*.iml
+
+# Misc Clojure Stuff
+/classes/
+/target/
+/checkouts/
+.lein-deps-sum
+.lein-repl-history
+.lein-plugins/
+.lein-failures
+.nrepl-port
+.cpcache/
+
