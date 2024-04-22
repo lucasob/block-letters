@@ -1,5 +1,5 @@
 (ns letters
-  (:import [clojure.lang Symbol]))
+  (:require [clojure.string :as string]))
 
 (def ^:const width 5)
 
@@ -165,5 +165,15 @@
         [0 0 0 0 0]
         [0 0 1 0 0]])
 
-(defn ->letter [^Symbol letter]
-  @(ns-resolve 'letters letter))
+(def space [[0 0 0 0 0]
+            [0 0 0 0 0]
+            [0 0 0 0 0]
+            [0 0 0 0 0]
+            [0 0 0 0 0]])
+
+(defn ->letter [^String letter]
+  (if (= " " letter)
+    space
+    (try
+      (->> letter (str) (string/lower-case) (symbol) (ns-resolve 'letters) (deref))
+      (catch Exception _e nil))))

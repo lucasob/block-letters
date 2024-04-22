@@ -29,7 +29,7 @@
                                (format "%s does not exist!\n" msg)))))})
 
 (defn block-letters [letters opts]
-  (printing/->sentence (mapv (comp letters/->letter symbol str) letters) opts))
+  (printing/->sentence (mapv letters/->letter letters) opts))
 
 (defn -main
   [& args]
