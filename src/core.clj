@@ -1,5 +1,6 @@
 (ns core
   (:require
+    [clojure.string :as string]
     [printing :as printing]
     [babashka.cli :as cli]))
 
@@ -29,7 +30,7 @@
                                (format "%s does not exist!\n" msg)))))})
 
 (defn block-letters [letters opts]
-  (printing/->sentence (mapv letters/->letter letters) opts))
+  (printing/->sentence (mapv letters/->letter (string/lower-case letters)) opts))
 
 (defn -main
   [& args]

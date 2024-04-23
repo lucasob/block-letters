@@ -1,1 +1,9 @@
-{:paths ["src"]}
+{:paths ["src"]
+ :tasks {:init (do (defn sh [& args]
+                     (binding [*out* *err*]
+                       (apply println "+" args))
+                     (apply shell args))
+
+                   (def clj (partial sh "clojure")))
+         test  {:doc  "Run test suite."
+                :task (apply clj "-M:test" *command-line-args*)}}}
