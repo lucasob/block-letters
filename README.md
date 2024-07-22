@@ -19,13 +19,13 @@ clj -X:test
 ### Help
 
 ```shell
-bb -m core --help
 ```
 
 ```text
 -l, --letters     The input word
--r, --replacement The value to use in place of the default
--w, --width       The character width assigned to empty space
+-r, --replacement The value to use in place of the default (default ":saluting_face:")
+-s, --space-char  The character that you would like to represent an empty space (default " "")
+-w, --width       The character width assigned to empty space (default 11.74)
 ```
 
 ### Invocation

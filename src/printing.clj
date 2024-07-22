@@ -1,15 +1,6 @@
 (ns printing
-  (:require
-    [clojure.string :as string]
-    [letters :as letters])
+  (:require [clojure.string :as string])
   (:import [java.math RoundingMode]))
-
-(def ^:private space-width 2)
-
-(defn space
-  "Represents the amount of whitespace between
-  components within an individual letter"
-  [] (repeat 5 (repeat space-width " ")))
 
 (defn- get-width-to-use [average-width target-width]
   (cond
@@ -22,47 +13,46 @@
     :else
     (.setScale (bigdec target-width) 0 RoundingMode/UP)))
 
-(defn- ->space-reducer [width]
-  (fn [{:keys [spaces-width
-               spaces-count
-               constructed-line]}
+(defn- ->space-reducer [width space-char]
+  (fn [{:keys [total-space-width
+               total-spaces-count]
+        :as   reduction}
        character]
     (if (= \0 character)
-      (let [average-width (if (not= spaces-count 0)
-                            (with-precision 10 (bigdec (/ spaces-width spaces-count)))
+      (let [average-width (if (not= total-spaces-count 0)
+                            (with-precision 10 (bigdec (/ total-space-width total-spaces-count)))
                             width)
-            width-to-use (get-width-to-use average-width width)]
-        {:spaces-width     (+ spaces-width width-to-use)
-         :spaces-count     (inc spaces-count)
-         :constructed-line (str constructed-line (string/join (repeat width-to-use " ")))})
-      {:spaces-width     spaces-width
-       :spaces-count     spaces-count
-       :constructed-line (str constructed-line character)})))
+            char-space-width (get-width-to-use average-width width)]
+        (-> reduction
+            (update :constructed-line #(str % (string/join (repeat char-space-width space-char))))
+            (update :total-spaces-count inc)
+            (update :total-space-width (partial + char-space-width))))
+      (update reduction :constructed-line #(str % character)))))
 
 (defn- ->replace-line
-  [replacement width line]
+  "replaces any `0` chars with `width` number of `space-char`s and
+  any `1` chars with `replacement`
+
+  if `width` is a non-integer, will calculate whether to round up or down based upon
+  number of `space-chars` already used"
+  [{:keys [replacement width space-char]} line]
   (->
     (reduce
-      (->space-reducer width)
-      {:spaces-width     0
-       :spaces-count     0
-       :constructed-line ""}
+      (->space-reducer width space-char)
+      {:total-space-width  0
+       :total-spaces-count 0
+       :constructed-line   ""}
       line)
     :constructed-line
     (string/replace #"1" replacement)))
 
 (defn ->sentence
-  [letters & {:keys [replacement width]
-              :or   {width 5.73}}]
+  [letters & {:keys [replacement width space-char]}]
   {:pre [(vector? letters)]}
-  (let [spaces (repeat (count letters) (space))
-        lines (->>
-                (interleave letters spaces)
-                (apply interleave)
-                (partition (count letters))
-                (flatten)
-                (partition (* (count letters) (+ 2 letters/width)))
-                (map string/join))]
-    (->> lines
-      (map (partial ->replace-line replacement width))
-      (string/join "\n"))))
+  (->> letters
+       (apply mapv vector)
+       (map (partial string/join " "))
+       (map (partial ->replace-line {:replacement replacement
+                                     :space-char  space-char
+                                     :width       width}))
+       (string/join "\n")))

@@ -1,8 +1,8 @@
 (ns functionality-test
-  (:require
-    [clojure.test :refer :all]
-    [printing :as printing]
-    [core :as core]))
+  (:require [clojure.string :as string]
+            [clojure.test :refer :all]
+            [core :as core]
+            [printing :as printing]))
 
 (deftest get-width-to-use-test
   (testing "whole number target width"
@@ -22,23 +22,37 @@
         (is (= (bigdec 2) (#'printing/get-width-to-use 100 target-width)))))))
 
 (deftest ->replace-line-test
-  (testing "replaces `1` with target"
-    (let [replacement "foo"]
-      (is (= replacement (#'printing/->replace-line replacement 1 "1")))
+  (let [replacement "foo"
+        space-char " "]
+    (testing "replaces `1` with `replacement"
+      (is (= replacement (#'printing/->replace-line {:replacement replacement
+                                                     :width       1
+                                                     :space-char  space-char} "1")))
       (is (= (str replacement replacement)
-            (#'printing/->replace-line replacement 1 "11")))))
+             (#'printing/->replace-line {:replacement replacement
+                                         :width       1
+                                         :space-char  space-char} "11"))))
 
-  (testing "replaces `0` with `width` number of spaces"
-    (let [replacement "foo"]
-      (is (= "     " (#'printing/->replace-line replacement 5 "0")))
-      (is (= "          " (#'printing/->replace-line replacement 5 "00")))))
+    (testing "replaces `0` with `width` number of `space-char`"
+      (is (= "     " (#'printing/->replace-line {:replacement replacement
+                                                 :width       5
+                                                 :space-char  space-char} "0")))
+      (is (= "          " (#'printing/->replace-line {:replacement replacement
+                                                      :width       5
+                                                      :space-char  space-char} "00"))))
 
-  (testing "does not replace other chars"
-    (is (= "hello mum" (#'printing/->replace-line "foo" 5 "hello mum")))))
+    (testing "does not replace other chars"
+      (is (= "hello mum" (#'printing/->replace-line {:replacement replacement
+                                                     :width       5
+                                                     :space-char  space-char} "hello mum"))))))
 
 (deftest block-letters
-  (is (= "88888  88888  \n8   8  8   8  \n88888  88888  \n8   8  8   8  \n8   8  88888  "
-        (core/block-letters "ab" {:replacement "8" :width 1}))))
+  (is (= (string/join "\n" ["88888 88888"
+                            "8   8 8   8"
+                            "88888 88888"
+                            "8   8 8   8"
+                            "8   8 88888"])
+         (core/block-letters "ab" {:replacement "8" :width 1 :space-char " "}))))
 
 (deftest ->letter
   (testing "Standard character"
