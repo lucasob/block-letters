@@ -11,7 +11,7 @@ not! This project solves those woes.
 ## Testing
 
 ```shell
-clj -X:test
+bb test
 ```
 
 ## Usage

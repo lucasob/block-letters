@@ -2,6 +2,7 @@
   (:require [clojure.string :as string]
             [clojure.test :refer :all]
             [core :as core]
+            [letters :as letters]
             [printing :as printing]))
 
 (deftest get-width-to-use-test
@@ -47,19 +48,25 @@
                                                      :space-char  space-char} "hello mum"))))))
 
 (deftest block-letters
-  (is (= (string/join "\n" ["88888 88888"
-                            "8   8 8   8"
-                            "88888 88888"
-                            "8   8 8   8"
-                            "8   8 88888"])
+  (is (= (string/join "\n" ["88888   88888"
+                            "8   8   8   8"
+                            "88888   88888"
+                            "8   8   8   8"
+                            "8   8   88888"])
          (core/block-letters "ab" {:replacement "8" :width 1 :space-char " "}))))
 
 (deftest ->letter
   (testing "Standard character"
-    (is (= letters/a (letters/->letter \a))))
+    (is (= ["11111"
+            "10001"
+            "11111"
+            "10001"
+            "10001"] (letters/->letter \a))))
   (testing "space is handled"
-    (is (= letters/space (letters/->letter \space))))
-  (testing "Forces casing"
-    (is (= letters/b (letters/->letter \B))))
+    (is (= ["00000"
+            "00000"
+            "00000"
+            "00000"
+            "00000"] (letters/->letter \space))))
   (testing "Simply returns nil for empty letter"
     (is (nil? (letters/->letter \\)))))

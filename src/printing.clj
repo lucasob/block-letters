@@ -51,7 +51,7 @@
   {:pre [(vector? letters)]}
   (->> letters
        (apply mapv vector)
-       (map (partial string/join " "))
+       (map (partial string/join "   "))
        (map (partial ->replace-line {:replacement replacement
                                      :space-char  space-char
                                      :width       width}))
